@@ -20,6 +20,7 @@ export const ApiService = async (city: string, country: string) : Promise<Prayer
         });
         if (response.data && response.data.data && response.data.data.timings) {
             const timings = response.data.data.timings;
+            console.log(response);
             return {
                 fajr: timings.Fajr,
                 dhuhr: timings.Dhuhr,

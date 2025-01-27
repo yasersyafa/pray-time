@@ -2,10 +2,11 @@ import { ExtensionContext, StatusBarAlignment, StatusBarItem, window, workspace 
 import { ApiService } from "./ApiService";
 import useLocalization from "../hooks/useLocalization";
 import { formatCountdown, getNextPrayerTimes } from "../hooks/useTimer";
+import { showConfirmationMessage } from "./confirmationMessage";
 
 let timerInterval: NodeJS.Timeout | undefined;
 
-const statusBar = async () => {
+const statusBar = async (context: ExtensionContext) => {
     const statusBar =  window.createStatusBarItem(StatusBarAlignment.Left, 1);
     statusBar.show();
     statusBar.text = `Fetching data...`;
@@ -14,14 +15,14 @@ const statusBar = async () => {
         const getCountry = useLocalization(getCity);
         const prayerTimes = await ApiService(getCity, getCountry);
         if(prayerTimes) {
-            startCountdownTimer(prayerTimes, statusBar);
+            startCountdownTimer(prayerTimes, statusBar, context);
         }else {
             console.error('error fetching data');
         }
     }
 };
 
-const startCountdownTimer = (prayerTimes: {[key: string] : string}, statusBarItem: StatusBarItem) => {
+const startCountdownTimer = async (prayerTimes: {[key: string] : string}, statusBarItem: StatusBarItem, context: ExtensionContext) => {
     if(timerInterval) {
         clearInterval(timerInterval);
     }
@@ -40,7 +41,7 @@ const startCountdownTimer = (prayerTimes: {[key: string] : string}, statusBarIte
 
         if (diff <= 0) {
             statusBarItem.text = "Time for Sholat!";
-            window.showInformationMessage("Waktunya sholat!");
+            showConfirmationMessage(context, 'Time for Sholat!');
             clearInterval(timerInterval);
             nextPrayerTime = getNextPrayerTimes(prayerTimes);
         } else {
@@ -51,5 +52,5 @@ const startCountdownTimer = (prayerTimes: {[key: string] : string}, statusBarIte
 
 
 export const registerStatusBar = (context: ExtensionContext) => {
-    statusBar();
+    statusBar(context);
 };

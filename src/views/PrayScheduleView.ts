@@ -11,38 +11,48 @@ export class SideBarWebViewProvider implements WebviewViewProvider {
     constructor(private readonly _extensionUri: Uri, public extensionContext: ExtensionContext) {}
     view?: WebviewView;
 
-    resolveWebviewView(webviewView: WebviewView, context: WebviewViewResolveContext, token: CancellationToken) {
+    resolveWebviewView(webviewView: WebviewView) {
         this.view = webviewView;
 
         webviewView.webview.options = {
             enableScripts: true,
             localResourceRoots: [this._extensionUri],
         };
-
-        webviewView.webview.html = this._getHtmlForWebView(webviewView.webview);
+        
+        this.updateWebviewContent(webviewView.webview);
+        // webviewView.webview.html = this._getHtmlForWebView(webviewView.webview);
     }
 
-    private _getHtmlForWebView(webView: Webview) {
-        const location = workspace.getConfiguration().get<string>('pray-time.welcome-message.city') ?? 'Jakarta';
-        const country = useLocalization(location);
+    async updateWebviewContent(webview: Webview) {
+      const city = workspace.getConfiguration().get<string>("pray-time.welcome-message.city") ?? "Jakarta";
+      
+      const country = useLocalization(city);
+      const prayerTimes = await ApiService(city, country);
+      
+      if (prayerTimes) {
+        webview.html = this.generateHtml(city, prayerTimes);
+      } else {
+        webview.html = `<h1>Error fetching prayer times. Please check your configuration.</h1>`;
+      }
+    }
 
-
+    private generateHtml(city: string, prayerTimes: { [key: string]: string }) {
         return `<!DOCTYPE html>
         <html lang="en">
-            <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>Pray Schedule</title>
-            </head>
-            <body>
-              <h1>${location} Pray Schedule</h1>
-              <ul>
-                <ol><strong>Fajr</strong>: </ol>
-                <ol><strong>Dhuhr</strong>: </ol>
-                <ol><strong>Asr</strong>: </ol>
-                <ol><strong>Maghrib</strong>: </ol>
-                <ol><strong>Isha</strong>: </ol>
-              </ul>
-            </body>`;
+          <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          <title>Pray Schedule</title>
+          </head>
+          <body>
+            <h1>${city} Pray Schedule</h1>
+            <ol>
+              <li><strong>Fajr</strong>: ${prayerTimes.fajr}</li>
+              <li><strong>Dhuhr</strong>: ${prayerTimes.dhuhr}</li>
+              <li><strong>Asr</strong>: ${prayerTimes.asr}</li>
+              <li><strong>Maghrib</strong>: ${prayerTimes.maghrib}</li>
+              <li><strong>Isha</strong>: ${prayerTimes.isha}</li>
+            </ol>
+          </body>`;
     }
 }

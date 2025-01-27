@@ -10,3 +10,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Add feature: Welcome Message & Configuration
 - Add feature: Countdown Pray Time (Status Bar)
 - Add feature: Sidebar Web View Panel
+- Add feature: Restart extension
