@@ -9,15 +9,34 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [ "*"],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "pray-time.helloWorld",
-        "title": "Hello World"
+        "command": "pray-time.welcome-message",
+        "title": "Welcome Message",
+        "category": "Pray Time"
       }
-    ]
+    ],
+    "configuration":{
+      "title": "Pray Time",
+      "properties": {
+        "pray-time.welcome-message.enabled": {
+          "title": "Welcome Message",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable welcome message."
+        },
+        "pray-time.welcome-message.city" : {
+          "title": "Select Location",
+          "type": "string",
+          "enum": ["Jakarta", "London", "Makkah"],
+          "default": "Jakarta",
+          "description": "Select city for adhan time"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
