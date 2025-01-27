@@ -9,3 +9,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 - Initial release
 - Add feature: Welcome Message & Configuration
 - Add feature: Countdown Pray Time (Status Bar)
+- Add feature: Sidebar Web View Panel

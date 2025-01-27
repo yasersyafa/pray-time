@@ -21,6 +21,24 @@
         "category": "Pray Time"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pray-time-view",
+          "title": "Pray Time Schedule",
+          "icon": "media/bell.svg"
+        }
+      ]
+    },
+    "views": {
+      "pray-time-view":[
+        {
+          "type": "webview",
+          "id": "pray-time-sidear-panel",
+          "name": "Pray Time Schedule"
+        }
+      ]
+    },
     "configuration": {
       "title": "Pray Time",
       "properties": {
